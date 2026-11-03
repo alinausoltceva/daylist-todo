@@ -25,6 +25,19 @@ function createElement(tagName, className, textContent) {
 const app = createElement('div', 'app');
 app.id = 'app';
 
+// Назначение основному контейнеру семантической роли
+app.setAttribute('aria-label', 'Приложение Daylist');
+
+
+// Ссылка для перехода к основному содержимому
+const skipLink = createElement(
+    'a',
+    'skip-link',
+    'Перейти к основному содержимому'
+);
+
+skipLink.href = '#main-content';
+
 
 // Шапка приложения
 const header = createElement('header', 'app-header');
@@ -44,7 +57,7 @@ header.append(brand);
 
 // Основная область приложения
 const main = createElement('main', 'app-main');
-
+main.id = 'main-content';
 
 // Секция со списком задач
 const tasksSection = createElement('section', 'tasks-section');
@@ -280,6 +293,7 @@ main.append(tasksSection);
 
 // Сборка приложения
 app.append(
+    skipLink,
     header,
     main,
     notificationArea
