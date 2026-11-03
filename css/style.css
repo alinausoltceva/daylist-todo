@@ -4,6 +4,8 @@
 
 body {
     margin: 0;
+    background-color: #f7f7f5;
+    color: #292929;
     font-family: Arial, sans-serif;
 }
 
@@ -12,16 +14,22 @@ body {
     min-height: 100vh;
 }
 
+/* Шапка */
 .app-header {
     padding: 24px 40px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #eaeaea;
 }
 
 .brand-title {
     margin: 0;
+    font-size: 28px;
 }
 
 .brand-subtitle {
     margin: 8px 0 0;
+    color: #777777;
+    font-size: 14px;
 }
 
 .app-main {
@@ -30,12 +38,98 @@ body {
     padding: 40px;
 }
 
+.section-header {
+    margin-bottom: 28px;
+}
+
 .section-title {
     margin: 0;
+    font-size: 26px;
 }
 
 .section-description {
-    margin-top: 8px;
+    margin: 8px 0 0;
+    color: #777777;
+    font-size: 14px;
+}
+
+.task-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 12px;
+}
+
+.form-group {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.form-label,
+.control-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #555555;
+}
+
+.form-input {
+    width: 100%;
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #dddddd;
+    border-radius: 7px;
+    background-color: #ffffff;
+    color: #292929;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+    .form-input:focus {
+        outline: 2px solid #b8a6d9;
+        outline-offset: 1px;
+        border-color: #9a83c4;
+    }
+
+    .form-input::placeholder {
+        color: #aaaaaa;
+    }
+
+.add-task-button {
+    min-height: 42px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 7px;
+    background-color: #75609b;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .add-task-button:hover {
+        background-color: #604b85;
+    }
+
+.task-controls {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
 }
 
 .task-list {
@@ -46,19 +140,48 @@ body {
 
 .empty-state {
     padding: 40px 20px;
+    border: 1px dashed #dddddd;
+    border-radius: 12px;
+    background-color: #ffffff;
     text-align: center;
 }
 
 .empty-state-title {
     margin: 0;
+    font-size: 18px;
 }
 
 .empty-state-description {
-    margin-top: 8px;
+    margin: 8px 0 0;
+    color: #888888;
+    font-size: 14px;
 }
 
 .notification-area {
     position: fixed;
-    bottom: 20px;
     right: 20px;
+    bottom: 20px;
+}
+
+@media (max-width: 650px) {
+    .app-header {
+        padding: 20px;
+    }
+
+    .app-main {
+        padding: 28px 20px;
+    }
+
+    .task-form {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .task-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .add-task-button {
+        width: 100%;
+    }
 }
