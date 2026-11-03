@@ -1,0 +1,64 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.app {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.app-header {
+    padding: 24px 40px;
+}
+
+.brand-title {
+    margin: 0;
+}
+
+.brand-subtitle {
+    margin: 8px 0 0;
+}
+
+.app-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px;
+}
+
+.section-title {
+    margin: 0;
+}
+
+.section-description {
+    margin-top: 8px;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.empty-state-title {
+    margin: 0;
+}
+
+.empty-state-description {
+    margin-top: 8px;
+}
+
+.notification-area {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+}
