@@ -167,8 +167,39 @@ document.body.append(
     notificationArea
 );
 
-// Массив задач
-const tasks = [];
+
+// Ключ для хранения задач в localStorage
+const STORAGE_KEY = 'daylist-tasks';
+
+// Загрузка задач из localStorage
+function loadTasks() {
+    const savedTasks = localStorage.getItem(STORAGE_KEY);
+
+    if (!savedTasks) {
+        return [];
+    }
+
+    try {
+        const parsedTasks = JSON.parse(savedTasks);
+
+        return Array.isArray(parsedTasks) ? parsedTasks : [];
+    } catch (error) {
+        console.error('Не удалось загрузить задачи:', error);
+        return [];
+    }
+}
+
+// Сохранение задач в localStorage
+function saveTasks() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    } catch (error) {
+        console.error('Не удалось сохранить задачи:', error);
+    }
+}
+
+// Массив задач загружается при запуске приложения
+const tasks = loadTasks();
 
 // Форматирование даты
 function formatDate(dateString) {
@@ -260,6 +291,7 @@ function createEditForm(task) {
         task.title = newTitle;
         task.date = dateInput.value;
 
+        saveTasks();
         renderTasks();
     });
 
@@ -323,6 +355,8 @@ function createTaskElement(task) {
 
     completionCheckbox.addEventListener('change', () => {
         task.completed = completionCheckbox.checked;
+
+        saveTasks();
         renderTasks();
     });
 
@@ -426,18 +460,18 @@ function renderTasks() {
     });
 }
 
-
 // Добавление новой задачи
 function addTask(title, date) {
-    const newTask = {
+    const task = {
         id: Date.now(),
         title: title,
         date: date,
         completed: false
     };
 
-    tasks.push(newTask);
+    tasks.push(task);
 
+    saveTasks();
     renderTasks();
 }
 
@@ -451,6 +485,7 @@ function deleteTask(taskId) {
 
     tasks.splice(taskIndex, 1);
 
+    saveTasks();
     renderTasks();
 }
 
