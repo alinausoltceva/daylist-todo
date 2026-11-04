@@ -19,15 +19,13 @@ function createElement(tagName, className, textContent) {
     return element;
 }
 
-
-// Создание ссылки для перехода к основному содержимому
+// Ссылка для перехода к основному содержимому
 const skipLink = createElement(
     'a',
     'skip-link',
     'Перейти к основному содержимому'
 );
 skipLink.href = '#main-content';
-
 
 // Шапка приложения
 const header = createElement('header', 'app-header');
@@ -112,11 +110,7 @@ const filterOptions = [
 ];
 
 filterOptions.forEach(option => {
-    const optionElement = createElement(
-        'option',
-        '',
-        option.text
-    );
+    const optionElement = createElement('option', '', option.text);
     optionElement.value = option.value;
     filterSelect.append(optionElement);
 });
@@ -132,11 +126,7 @@ const sortOptions = [
 ];
 
 sortOptions.forEach(option => {
-    const optionElement = createElement(
-        'option',
-        '',
-        option.text
-    );
+    const optionElement = createElement('option', '', option.text);
     optionElement.value = option.value;
     sortSelect.append(optionElement);
 });
@@ -195,12 +185,103 @@ function formatDate(dateString) {
     });
 }
 
+// Создание формы редактирования задачи
+function createEditForm(task) {
+    const editForm = createElement('form', 'task-edit-form');
+
+    // Поле названия
+    const titleField = createElement('div', 'form-field');
+
+    const titleLabel = createElement(
+        'label',
+        'form-label',
+        'Название задачи'
+    );
+
+    const titleInput = createElement('input', 'form-input');
+    titleInput.type = 'text';
+    titleInput.value = task.title;
+    titleInput.maxLength = 100;
+    titleInput.required = true;
+
+    titleLabel.htmlFor = `edit-title-${task.id}`;
+    titleInput.id = `edit-title-${task.id}`;
+
+    titleField.append(titleLabel, titleInput);
+
+    // Поле даты
+    const dateField = createElement('div', 'form-field');
+
+    const dateLabel = createElement(
+        'label',
+        'form-label',
+        'Срок выполнения'
+    );
+
+    const dateInput = createElement('input', 'form-input');
+    dateInput.type = 'date';
+    dateInput.value = task.date;
+    dateLabel.htmlFor = `edit-date-${task.id}`;
+    dateInput.id = `edit-date-${task.id}`;
+
+    dateField.append(dateLabel, dateInput);
+
+    // Кнопки формы
+    const actions = createElement('div', 'task-edit-actions');
+
+    const saveButton = createElement(
+        'button',
+        'button button-primary',
+        'Сохранить'
+    );
+    saveButton.type = 'submit';
+
+    const cancelButton = createElement(
+        'button',
+        'button task-edit-cancel',
+        'Отмена'
+    );
+    cancelButton.type = 'button';
+
+    actions.append(saveButton, cancelButton);
+    editForm.append(titleField, dateField, actions);
+
+    // Сохранение изменений
+    editForm.addEventListener('submit', event => {
+        event.preventDefault();
+
+        const newTitle = titleInput.value.trim();
+
+        if (!newTitle) {
+            titleInput.focus();
+            return;
+        }
+
+        task.title = newTitle;
+        task.date = dateInput.value;
+
+        renderTasks();
+    });
+
+    // Отмена редактирования
+    cancelButton.addEventListener('click', () => {
+        renderTasks();
+    });
+
+    return editForm;
+}
+
 // Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
     taskCard.dataset.taskId = task.id;
 
-    // Блок с названием и датой
+    // Если задача выполнена, добавляем соответствующий класс
+    if (task.completed) {
+        taskCard.classList.add('task-card--completed');
+    }
+
+    // Содержимое карточки
     const taskContent = createElement('div', 'task-card-content');
 
     const taskTitle = createElement(
@@ -217,7 +298,10 @@ function createTaskElement(task) {
 
     taskContent.append(taskTitle, taskDate);
 
-    // Чекбокс выполнения задачи
+    // Блок действий
+    const taskActions = createElement('div', 'task-card-actions');
+
+    // Чекбокс выполнения
     const completionContainer = createElement(
         'div',
         'task-completion'
@@ -240,12 +324,6 @@ function createTaskElement(task) {
 
     completionLabel.htmlFor = completionCheckbox.id;
 
-    // Если задача уже выполнена, применяем соответствующее оформление
-    if (task.completed) {
-        taskCard.classList.add('task-card--completed');
-    }
-
-    // Обработчик изменения состояния задачи
     completionCheckbox.addEventListener('change', () => {
         task.completed = completionCheckbox.checked;
 
@@ -264,7 +342,26 @@ function createTaskElement(task) {
         completionLabel
     );
 
-    taskCard.append(taskContent, completionContainer);
+    // Кнопка редактирования
+    const editButton = createElement(
+        'button',
+        'button task-edit-button',
+        'Изменить'
+    );
+
+    editButton.type = 'button';
+
+    editButton.addEventListener('click', () => {
+        const editForm = createEditForm(task);
+
+        taskCard.replaceChildren(editForm);
+
+        editForm.querySelector('input[type="text"]').focus();
+    });
+
+    taskActions.append(completionContainer, editButton);
+
+    taskCard.append(taskContent, taskActions);
 
     return taskCard;
 }
@@ -295,7 +392,7 @@ function addTask(title, date) {
     renderTasks();
 }
 
-// Обработка отправки формы
+// Обработка отправки формы добавления задачи
 taskForm.addEventListener('submit', event => {
     event.preventDefault();
 
