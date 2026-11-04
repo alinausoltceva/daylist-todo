@@ -274,11 +274,11 @@ function createEditForm(task) {
 // Создание карточки задачи
 
 // Создание карточки задачи
+// Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
     taskCard.dataset.taskId = task.id;
 
-    // Если задача выполнена, добавляем соответствующий класс
     if (task.completed) {
         taskCard.classList.add('task-card--completed');
     }
@@ -374,14 +374,12 @@ function createTaskElement(task) {
         deleteTask(task.id);
     });
 
-    // Собираем блок действий
     taskActions.append(
         completionContainer,
         editButton,
         deleteButton
     );
 
-    // Собираем карточку
     taskCard.append(taskContent, taskActions);
 
     return taskCard;
@@ -389,12 +387,33 @@ function createTaskElement(task) {
 
 
 // Отрисовка списка задач
+// Отрисовка списка задач
 function renderTasks() {
     taskList.replaceChildren();
 
-    emptyState.hidden = tasks.length > 0;
+    // Получаем поисковый запрос
+    const searchQuery = searchInput.value.trim().toLowerCase();
 
-    tasks.forEach(task => {
+    // Оставляем только задачи, названия которых содержат запрос
+    const filteredTasks = tasks.filter(task => {
+        return task.title.toLowerCase().includes(searchQuery);
+    });
+
+    // Обрабатываем пустой список и отсутствие результатов поиска
+    if (filteredTasks.length === 0) {
+        emptyState.hidden = false;
+
+        emptyState.textContent = tasks.length === 0
+            ? 'Пока здесь нет задач. Добавь первую!'
+            : 'По запросу ничего не найдено.';
+
+        return;
+    }
+
+    emptyState.hidden = true;
+
+    // Отображаем найденные задачи
+    filteredTasks.forEach(task => {
         const taskElement = createTaskElement(task);
         taskList.append(taskElement);
     });
@@ -443,6 +462,11 @@ taskForm.addEventListener('submit', event => {
 
     taskForm.reset();
     taskTitleInput.focus();
+});
+
+// Обработка поиска задач
+searchInput.addEventListener('input', () => {
+    renderTasks();
 });
 
 renderTasks();
