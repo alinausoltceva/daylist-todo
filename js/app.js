@@ -271,9 +271,7 @@ function createEditForm(task) {
     return editForm;
 }
 
-// Создание карточки задачи
 
-// Создание карточки задачи
 // Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
@@ -283,7 +281,6 @@ function createTaskElement(task) {
         taskCard.classList.add('task-card--completed');
     }
 
-    // Содержимое карточки
     const taskContent = createElement('div', 'task-card-content');
 
     const taskTitle = createElement(
@@ -300,10 +297,8 @@ function createTaskElement(task) {
 
     taskContent.append(taskTitle, taskDate);
 
-    // Блок действий
     const taskActions = createElement('div', 'task-card-actions');
 
-    // Чекбокс выполнения
     const completionContainer = createElement(
         'div',
         'task-completion'
@@ -328,15 +323,7 @@ function createTaskElement(task) {
 
     completionCheckbox.addEventListener('change', () => {
         task.completed = completionCheckbox.checked;
-
-        taskCard.classList.toggle(
-            'task-card--completed',
-            task.completed
-        );
-
-        completionLabel.textContent = task.completed
-            ? 'Выполнена'
-            : 'Выполнить';
+        renderTasks();
     });
 
     completionContainer.append(
@@ -344,7 +331,6 @@ function createTaskElement(task) {
         completionLabel
     );
 
-    // Кнопка редактирования
     const editButton = createElement(
         'button',
         'button task-edit-button',
@@ -361,7 +347,6 @@ function createTaskElement(task) {
         editForm.querySelector('input[type="text"]').focus();
     });
 
-    // Кнопка удаления
     const deleteButton = createElement(
         'button',
         'button task-delete-button',
@@ -387,37 +372,46 @@ function createTaskElement(task) {
 
 
 // Отрисовка списка задач
-// Отрисовка списка задач
 function renderTasks() {
     taskList.replaceChildren();
 
-    // Получаем поисковый запрос
     const searchQuery = searchInput.value.trim().toLowerCase();
 
-    // Оставляем только задачи, названия которых содержат запрос
+    const selectedStatus = filterSelect.value;
+
     const filteredTasks = tasks.filter(task => {
-        return task.title.toLowerCase().includes(searchQuery);
+        const matchesSearch = task.title
+            .toLowerCase()
+            .includes(searchQuery);
+
+        const matchesStatus =
+            selectedStatus === 'all' ||
+            (selectedStatus === 'active' && !task.completed) ||
+            (selectedStatus === 'completed' && task.completed);
+
+        return matchesSearch && matchesStatus;
     });
 
-    // Обрабатываем пустой список и отсутствие результатов поиска
+    if (tasks.length === 0) {
+        emptyState.hidden = false;
+        emptyState.textContent = 'Пока здесь нет задач. Добавь первую!';
+        return;
+    }
+
     if (filteredTasks.length === 0) {
         emptyState.hidden = false;
-
-        emptyState.textContent = tasks.length === 0
-            ? 'Пока здесь нет задач. Добавь первую!'
-            : 'По запросу ничего не найдено.';
-
+        emptyState.textContent = 'Задачи не найдены.';
         return;
     }
 
     emptyState.hidden = true;
 
-    // Отображаем найденные задачи
     filteredTasks.forEach(task => {
         const taskElement = createTaskElement(task);
         taskList.append(taskElement);
     });
 }
+
 
 // Добавление новой задачи
 function addTask(title, date) {
@@ -466,6 +460,11 @@ taskForm.addEventListener('submit', event => {
 
 // Обработка поиска задач
 searchInput.addEventListener('input', () => {
+    renderTasks();
+});
+
+// Обработка фильтрации задач по статусу
+filterSelect.addEventListener('change', () => {
     renderTasks();
 });
 
