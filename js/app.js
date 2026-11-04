@@ -379,6 +379,8 @@ function renderTasks() {
 
     const selectedStatus = filterSelect.value;
 
+    const selectedSort = sortSelect.value;
+
     const filteredTasks = tasks.filter(task => {
         const matchesSearch = task.title
             .toLowerCase()
@@ -404,9 +406,21 @@ function renderTasks() {
         return;
     }
 
+    const sortedTasks = [...filteredTasks];
+
+    if (selectedSort === 'date-asc') {
+        sortedTasks.sort((a, b) => {
+            return new Date(a.date) - new Date(b.date);
+        });
+    } else if (selectedSort === 'date-desc') {
+        sortedTasks.sort((a, b) => {
+            return new Date(b.date) - new Date(a.date);
+        });
+    }
+
     emptyState.hidden = true;
 
-    filteredTasks.forEach(task => {
+    sortedTasks.forEach(task => {
         const taskElement = createTaskElement(task);
         taskList.append(taskElement);
     });
@@ -465,6 +479,11 @@ searchInput.addEventListener('input', () => {
 
 // Обработка фильтрации задач по статусу
 filterSelect.addEventListener('change', () => {
+    renderTasks();
+});
+
+// Обработка сортировки задач по дате
+sortSelect.addEventListener('change', () => {
     renderTasks();
 });
 
