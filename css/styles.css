@@ -573,3 +573,19 @@ a:focus-visible {
     }
 }
 
+/* Кнопка удаления задачи */
+.task-delete-button {
+    padding: 7px 12px;
+    color: #b45d5d;
+    background-color: #f9eeee;
+    border: 1px solid transparent;
+    border-radius: var(--radius-small);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .task-delete-button:hover {
+        background-color: #f2dddd;
+    }

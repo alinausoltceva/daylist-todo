@@ -272,6 +272,8 @@ function createEditForm(task) {
 }
 
 // Создание карточки задачи
+
+// Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
     taskCard.dataset.taskId = task.id;
@@ -359,12 +361,32 @@ function createTaskElement(task) {
         editForm.querySelector('input[type="text"]').focus();
     });
 
-    taskActions.append(completionContainer, editButton);
+    // Кнопка удаления
+    const deleteButton = createElement(
+        'button',
+        'button task-delete-button',
+        'Удалить'
+    );
 
+    deleteButton.type = 'button';
+
+    deleteButton.addEventListener('click', () => {
+        deleteTask(task.id);
+    });
+
+    // Собираем блок действий
+    taskActions.append(
+        completionContainer,
+        editButton,
+        deleteButton
+    );
+
+    // Собираем карточку
     taskCard.append(taskContent, taskActions);
 
     return taskCard;
 }
+
 
 // Отрисовка списка задач
 function renderTasks() {
@@ -388,6 +410,19 @@ function addTask(title, date) {
     };
 
     tasks.push(newTask);
+
+    renderTasks();
+}
+
+// Удаление задачи
+function deleteTask(taskId) {
+    const taskIndex = tasks.findIndex(task => task.id === taskId);
+
+    if (taskIndex === -1) {
+        return;
+    }
+
+    tasks.splice(taskIndex, 1);
 
     renderTasks();
 }
