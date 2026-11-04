@@ -1,11 +1,13 @@
 // Подключение таблицы стилей
+
 const stylesheet = document.createElement('link');
 stylesheet.rel = 'stylesheet';
 stylesheet.href = './css/styles.css';
 document.head.appendChild(stylesheet);
 
 
-// Вспомогательная функция для создания HTML-элементов
+// Вспомогательная функция создания элементов
+
 function createElement(tagName, className, textContent) {
     const element = document.createElement(tagName);
 
@@ -13,7 +15,7 @@ function createElement(tagName, className, textContent) {
         element.className = className;
     }
 
-    if (textContent) {
+    if (textContent !== undefined && textContent !== null) {
         element.textContent = textContent;
     }
 
@@ -21,15 +23,12 @@ function createElement(tagName, className, textContent) {
 }
 
 
-// Создание основного контейнера приложения
+// Создание основного контейнера
+
 const app = createElement('div', 'app');
 app.id = 'app';
 
-// Назначение основному контейнеру семантической роли
-app.setAttribute('aria-label', 'Приложение Daylist');
-
-
-// Ссылка для перехода к основному содержимому
+// Ссылка для быстрого перехода к содержимому
 const skipLink = createElement(
     'a',
     'skip-link',
@@ -40,11 +39,13 @@ skipLink.href = '#main-content';
 
 
 // Шапка приложения
+
 const header = createElement('header', 'app-header');
 
 const brand = createElement('div', 'brand');
 
 const title = createElement('h1', 'brand-title', 'Daylist');
+
 const subtitle = createElement(
     'p',
     'brand-subtitle',
@@ -56,15 +57,15 @@ header.append(brand);
 
 
 // Основная область приложения
+
 const main = createElement('main', 'app-main');
 main.id = 'main-content';
 
-// Секция со списком задач
+
 const tasksSection = createElement('section', 'tasks-section');
+
 tasksSection.setAttribute('aria-labelledby', 'tasks-heading');
 
-
-// Заголовок секции
 const sectionHeader = createElement('div', 'section-header');
 
 const sectionTitle = createElement(
@@ -72,6 +73,7 @@ const sectionTitle = createElement(
     'section-title',
     'Мои задачи'
 );
+
 sectionTitle.id = 'tasks-heading';
 
 const sectionDescription = createElement(
@@ -87,8 +89,6 @@ sectionHeader.append(sectionTitle, sectionDescription);
 const taskForm = createElement('form', 'task-form');
 taskForm.id = 'task-form';
 
-
-// Поле названия задачи
 const taskTitleGroup = createElement('div', 'form-group');
 
 const taskTitleLabel = createElement(
@@ -96,9 +96,11 @@ const taskTitleLabel = createElement(
     'form-label',
     'Название задачи'
 );
+
 taskTitleLabel.htmlFor = 'task-title';
 
 const taskTitleInput = createElement('input', 'form-input');
+
 taskTitleInput.type = 'text';
 taskTitleInput.id = 'task-title';
 taskTitleInput.name = 'title';
@@ -117,9 +119,11 @@ const taskDateLabel = createElement(
     'form-label',
     'Дата выполнения'
 );
+
 taskDateLabel.htmlFor = 'task-date';
 
 const taskDateInput = createElement('input', 'form-input');
+
 taskDateInput.type = 'date';
 taskDateInput.id = 'task-date';
 taskDateInput.name = 'date';
@@ -133,6 +137,7 @@ const addTaskButton = createElement(
     'add-task-button',
     'Добавить задачу'
 );
+
 addTaskButton.type = 'submit';
 
 
@@ -145,6 +150,7 @@ taskForm.append(
 
 
 // Панель поиска, фильтрации и сортировки
+
 const taskControls = createElement('div', 'task-controls');
 
 
@@ -156,14 +162,19 @@ const searchLabel = createElement(
     'control-label',
     'Поиск'
 );
+
 searchLabel.htmlFor = 'task-search';
 
 const searchInput = createElement('input', 'form-input');
+
 searchInput.type = 'search';
 searchInput.id = 'task-search';
 searchInput.name = 'search';
 searchInput.placeholder = 'Найти задачу...';
-searchInput.setAttribute('aria-label', 'Поиск задач по названию');
+searchInput.setAttribute(
+    'aria-label',
+    'Поиск задач по названию'
+);
 
 searchGroup.append(searchLabel, searchInput);
 
@@ -176,9 +187,11 @@ const filterLabel = createElement(
     'control-label',
     'Показать'
 );
+
 filterLabel.htmlFor = 'task-filter';
 
 const filterSelect = createElement('select', 'form-input');
+
 filterSelect.id = 'task-filter';
 filterSelect.name = 'filter';
 
@@ -189,20 +202,17 @@ const filterOptions = [
 ];
 
 filterOptions.forEach(optionData => {
-    const option = createElement(
-        'option',
-        '',
-        optionData.text
-    );
+    const option = createElement('option', '', optionData.text);
 
     option.value = optionData.value;
+
     filterSelect.append(option);
 });
 
 filterGroup.append(filterLabel, filterSelect);
 
 
-// Сортировка задач по дате
+// Сортировка задач
 const sortGroup = createElement('div', 'control-group');
 
 const sortLabel = createElement(
@@ -210,9 +220,11 @@ const sortLabel = createElement(
     'control-label',
     'Сортировка'
 );
+
 sortLabel.htmlFor = 'task-sort';
 
 const sortSelect = createElement('select', 'form-input');
+
 sortSelect.id = 'task-sort';
 sortSelect.name = 'sort';
 
@@ -223,13 +235,10 @@ const sortOptions = [
 ];
 
 sortOptions.forEach(optionData => {
-    const option = createElement(
-        'option',
-        '',
-        optionData.text
-    );
+    const option = createElement('option', '', optionData.text);
 
     option.value = optionData.value;
+
     sortSelect.append(option);
 });
 
@@ -244,12 +253,14 @@ taskControls.append(
 );
 
 
-// Контейнер будущего списка задач
+// Контейнер списка задач
 const taskList = createElement('div', 'task-list');
 taskList.id = 'task-list';
 
+taskList.setAttribute('aria-live', 'polite');
 
-// Сообщение при отсутствии задач
+
+// Пустое состояние
 const emptyState = createElement('div', 'empty-state');
 
 const emptyStateTitle = createElement(
@@ -270,14 +281,16 @@ emptyState.append(
 );
 
 
-// Область для уведомлений приложения
+// Область уведомлений
 const notificationArea = createElement('div', 'notification-area');
+
 notificationArea.id = 'notification-area';
+
 notificationArea.setAttribute('role', 'status');
 notificationArea.setAttribute('aria-live', 'polite');
 
 
-// Сборка секции задач
+// Сборка интерфейса
 tasksSection.append(
     sectionHeader,
     taskForm,
@@ -286,12 +299,8 @@ tasksSection.append(
     emptyState
 );
 
-
-// Сборка основной области
 main.append(tasksSection);
 
-
-// Сборка приложения
 app.append(
     skipLink,
     header,
@@ -299,12 +308,121 @@ app.append(
     notificationArea
 );
 
-
-// Добавление приложения на страницу
 document.body.append(app);
 
 
-// Предотвращение перезагрузки страницы при отправке формы
+// Массив задач
+const tasks = [];
+
+
+// Форматирование даты
+
+function formatDate(dateString) {
+    if (!dateString) {
+        return 'Без срока';
+    }
+
+    const date = new Date(`${dateString}T00:00:00`);
+
+    return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+    });
+}
+
+
+// Создание карточки задачи
+
+function createTaskElement(task) {
+    const taskCard = createElement('article', 'task-card');
+
+    taskCard.dataset.taskId = task.id;
+
+
+    const taskTitle = createElement(
+        'h3',
+        'task-card-title',
+        task.title
+    );
+
+
+    const taskDate = createElement(
+        'p',
+        'task-card-date',
+        formatDate(task.date)
+    );
+
+
+    taskCard.append(
+        taskTitle,
+        taskDate
+    );
+
+    return taskCard;
+}
+
+
+// Отображение списка задач
+
+function renderTasks() {
+
+    taskList.replaceChildren();
+
+
+    emptyState.hidden = tasks.length > 0;
+
+
+    tasks.forEach(task => {
+        const taskElement = createTaskElement(task);
+
+        taskList.append(taskElement);
+    });
+}
+
+
+// Добавление новой задачи
+
+function addTask(title, date) {
+
+    const newTask = {
+        id: Date.now(),
+        title: title,
+        date: date,
+        completed: false
+    };
+
+
+    tasks.push(newTask);
+
+
+    renderTasks();
+}
+
+
+// Обработка отправки формы
+
 taskForm.addEventListener('submit', event => {
+
     event.preventDefault();
+
+
+    const title = taskTitleInput.value.trim();
+
+    const date = taskDateInput.value;
+
+    if (!title) {
+        taskTitleInput.focus();
+        return;
+    }
+
+    addTask(title, date);
+
+    taskForm.reset();
+
+
+    taskTitleInput.focus();
 });
+
+
+renderTasks();
