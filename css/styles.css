@@ -442,3 +442,57 @@ a:focus-visible {
         padding: 16px;
     }
 }
+
+
+/* Содержимое карточки задачи */
+.task-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-card--completed .task-card-title {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+}
+
+.task-card--completed .task-card-date {
+    color: var(--color-text-muted);
+}
+
+/* Чекбокс выполнения */
+.task-completion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.task-checkbox {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.task-completion-label {
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.task-card--completed .task-completion-label {
+    color: var(--color-primary);
+}
+
+/* Адаптация карточки для небольших экранов */
+@media (max-width: 480px) {
+    .task-card {
+        align-items: flex-start;
+    }
+
+    .task-completion {
+        align-self: flex-start;
+    }
+}

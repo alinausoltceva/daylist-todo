@@ -1,13 +1,10 @@
-// Подключение таблицы стилей
-
+// Подключение CSS
 const stylesheet = document.createElement('link');
 stylesheet.rel = 'stylesheet';
 stylesheet.href = './css/styles.css';
 document.head.appendChild(stylesheet);
 
-
-// Вспомогательная функция создания элементов
-
+// Вспомогательная функция для создания HTML-элементов
 function createElement(tagName, className, textContent) {
     const element = document.createElement(tagName);
 
@@ -23,177 +20,90 @@ function createElement(tagName, className, textContent) {
 }
 
 
-// Создание основного контейнера
-
-const app = createElement('div', 'app');
-app.id = 'app';
-
-// Ссылка для быстрого перехода к содержимому
+// Создание ссылки для перехода к основному содержимому
 const skipLink = createElement(
     'a',
     'skip-link',
     'Перейти к основному содержимому'
 );
-
 skipLink.href = '#main-content';
 
 
 // Шапка приложения
-
 const header = createElement('header', 'app-header');
 
-const brand = createElement('div', 'brand');
-
-const title = createElement('h1', 'brand-title', 'Daylist');
-
-const subtitle = createElement(
+const brand = createElement('div', 'app-brand');
+const brandTitle = createElement('h1', 'app-title', 'Daylist');
+const brandSubtitle = createElement(
     'p',
-    'brand-subtitle',
-    'Планируй день. Выполняй задуманное.'
+    'app-subtitle',
+    'Пространство для твоих планов'
 );
 
-brand.append(title, subtitle);
+brand.append(brandTitle, brandSubtitle);
 header.append(brand);
 
-
-// Основная область приложения
-
+// Основная часть приложения
 const main = createElement('main', 'app-main');
 main.id = 'main-content';
 
-
-const tasksSection = createElement('section', 'tasks-section');
-
-tasksSection.setAttribute('aria-labelledby', 'tasks-heading');
-
-const sectionHeader = createElement('div', 'section-header');
-
-const sectionTitle = createElement(
-    'h2',
-    'section-title',
-    'Мои задачи'
-);
-
-sectionTitle.id = 'tasks-heading';
-
-const sectionDescription = createElement(
-    'p',
-    'section-description',
-    'Все дела в одном месте — ничего не забудь.'
-);
-
-sectionHeader.append(sectionTitle, sectionDescription);
-
-
 // Форма добавления задачи
 const taskForm = createElement('form', 'task-form');
-taskForm.id = 'task-form';
-
-const taskTitleGroup = createElement('div', 'form-group');
 
 const taskTitleLabel = createElement(
     'label',
     'form-label',
     'Название задачи'
 );
-
 taskTitleLabel.htmlFor = 'task-title';
 
 const taskTitleInput = createElement('input', 'form-input');
-
 taskTitleInput.type = 'text';
 taskTitleInput.id = 'task-title';
 taskTitleInput.name = 'title';
-taskTitleInput.placeholder = 'Например, подготовить презентацию';
+taskTitleInput.placeholder = 'Например, прочитать главу';
 taskTitleInput.required = true;
 taskTitleInput.maxLength = 100;
-
-taskTitleGroup.append(taskTitleLabel, taskTitleInput);
-
-
-// Поле даты выполнения
-const taskDateGroup = createElement('div', 'form-group');
 
 const taskDateLabel = createElement(
     'label',
     'form-label',
-    'Дата выполнения'
+    'Срок выполнения'
 );
-
 taskDateLabel.htmlFor = 'task-date';
 
 const taskDateInput = createElement('input', 'form-input');
-
 taskDateInput.type = 'date';
 taskDateInput.id = 'task-date';
 taskDateInput.name = 'date';
 
-taskDateGroup.append(taskDateLabel, taskDateInput);
-
-
-// Кнопка добавления задачи
-const addTaskButton = createElement(
+const submitButton = createElement(
     'button',
-    'add-task-button',
+    'button button-primary',
     'Добавить задачу'
 );
+submitButton.type = 'submit';
 
-addTaskButton.type = 'submit';
+const titleField = createElement('div', 'form-field');
+titleField.append(taskTitleLabel, taskTitleInput);
 
+const dateField = createElement('div', 'form-field');
+dateField.append(taskDateLabel, taskDateInput);
 
-// Сборка формы
-taskForm.append(
-    taskTitleGroup,
-    taskDateGroup,
-    addTaskButton
-);
-
+taskForm.append(titleField, dateField, submitButton);
 
 // Панель поиска, фильтрации и сортировки
+const controls = createElement('div', 'task-controls');
 
-const taskControls = createElement('div', 'task-controls');
-
-
-// Поле поиска
-const searchGroup = createElement('div', 'control-group search-group');
-
-const searchLabel = createElement(
-    'label',
-    'control-label',
-    'Поиск'
-);
-
-searchLabel.htmlFor = 'task-search';
-
-const searchInput = createElement('input', 'form-input');
-
+// Поиск
+const searchInput = createElement('input', 'form-input search-input');
 searchInput.type = 'search';
-searchInput.id = 'task-search';
-searchInput.name = 'search';
-searchInput.placeholder = 'Найти задачу...';
-searchInput.setAttribute(
-    'aria-label',
-    'Поиск задач по названию'
-);
+searchInput.placeholder = 'Поиск задач...';
+searchInput.setAttribute('aria-label', 'Поиск задач по названию');
 
-searchGroup.append(searchLabel, searchInput);
-
-
-// Фильтр задач
-const filterGroup = createElement('div', 'control-group');
-
-const filterLabel = createElement(
-    'label',
-    'control-label',
-    'Показать'
-);
-
-filterLabel.htmlFor = 'task-filter';
-
+// Фильтр
 const filterSelect = createElement('select', 'form-input');
-
-filterSelect.id = 'task-filter';
-filterSelect.name = 'filter';
+filterSelect.setAttribute('aria-label', 'Фильтр задач');
 
 const filterOptions = [
     { value: 'all', text: 'Все задачи' },
@@ -201,122 +111,76 @@ const filterOptions = [
     { value: 'completed', text: 'Выполненные' }
 ];
 
-filterOptions.forEach(optionData => {
-    const option = createElement('option', '', optionData.text);
-
-    option.value = optionData.value;
-
-    filterSelect.append(option);
+filterOptions.forEach(option => {
+    const optionElement = createElement(
+        'option',
+        '',
+        option.text
+    );
+    optionElement.value = option.value;
+    filterSelect.append(optionElement);
 });
 
-filterGroup.append(filterLabel, filterSelect);
-
-
-// Сортировка задач
-const sortGroup = createElement('div', 'control-group');
-
-const sortLabel = createElement(
-    'label',
-    'control-label',
-    'Сортировка'
-);
-
-sortLabel.htmlFor = 'task-sort';
-
+// Сортировка
 const sortSelect = createElement('select', 'form-input');
-
-sortSelect.id = 'task-sort';
-sortSelect.name = 'sort';
+sortSelect.setAttribute('aria-label', 'Сортировка задач');
 
 const sortOptions = [
     { value: 'default', text: 'По умолчанию' },
     { value: 'date-asc', text: 'Сначала ближайшие' },
-    { value: 'date-desc', text: 'Сначала поздние' }
+    { value: 'date-desc', text: 'Сначала дальние' }
 ];
 
-sortOptions.forEach(optionData => {
-    const option = createElement('option', '', optionData.text);
-
-    option.value = optionData.value;
-
-    sortSelect.append(option);
+sortOptions.forEach(option => {
+    const optionElement = createElement(
+        'option',
+        '',
+        option.text
+    );
+    optionElement.value = option.value;
+    sortSelect.append(optionElement);
 });
 
-sortGroup.append(sortLabel, sortSelect);
+controls.append(searchInput, filterSelect, sortSelect);
 
+// Секция со списком задач
+const tasksSection = createElement('section', 'tasks-section');
 
-// Сборка панели управления
-taskControls.append(
-    searchGroup,
-    filterGroup,
-    sortGroup
+const sectionTitle = createElement(
+    'h2',
+    'section-title',
+    'Мои задачи'
 );
 
-
-// Контейнер списка задач
 const taskList = createElement('div', 'task-list');
-taskList.id = 'task-list';
-
 taskList.setAttribute('aria-live', 'polite');
 
-
-// Пустое состояние
-const emptyState = createElement('div', 'empty-state');
-
-const emptyStateTitle = createElement(
-    'h3',
-    'empty-state-title',
-    'Пока здесь пусто'
+const emptyState = createElement(
+    'div',
+    'empty-state',
+    'Пока здесь нет задач. Добавь первую!'
 );
-
-const emptyStateDescription = createElement(
-    'p',
-    'empty-state-description',
-    'Добавь первую задачу, чтобы начать планировать свой день.'
-);
-
-emptyState.append(
-    emptyStateTitle,
-    emptyStateDescription
-);
-
 
 // Область уведомлений
 const notificationArea = createElement('div', 'notification-area');
-
-notificationArea.id = 'notification-area';
-
 notificationArea.setAttribute('role', 'status');
 notificationArea.setAttribute('aria-live', 'polite');
 
+// Собираем интерфейс
+tasksSection.append(sectionTitle, taskList, emptyState);
+main.append(taskForm, controls, tasksSection);
 
-// Сборка интерфейса
-tasksSection.append(
-    sectionHeader,
-    taskForm,
-    taskControls,
-    taskList,
-    emptyState
-);
-
-main.append(tasksSection);
-
-app.append(
+document.body.append(
     skipLink,
     header,
     main,
     notificationArea
 );
 
-document.body.append(app);
-
-
 // Массив задач
 const tasks = [];
 
-
 // Форматирование даты
-
 function formatDate(dateString) {
     if (!dateString) {
         return 'Без срока';
@@ -331,14 +195,13 @@ function formatDate(dateString) {
     });
 }
 
-
 // Создание карточки задачи
-
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
-
     taskCard.dataset.taskId = task.id;
 
+    // Блок с названием и датой
+    const taskContent = createElement('div', 'task-card-content');
 
     const taskTitle = createElement(
         'h3',
@@ -346,45 +209,80 @@ function createTaskElement(task) {
         task.title
     );
 
-
     const taskDate = createElement(
         'p',
         'task-card-date',
         formatDate(task.date)
     );
 
+    taskContent.append(taskTitle, taskDate);
 
-    taskCard.append(
-        taskTitle,
-        taskDate
+    // Чекбокс выполнения задачи
+    const completionContainer = createElement(
+        'div',
+        'task-completion'
     );
+
+    const completionCheckbox = createElement(
+        'input',
+        'task-checkbox'
+    );
+
+    completionCheckbox.type = 'checkbox';
+    completionCheckbox.id = `task-completion-${task.id}`;
+    completionCheckbox.checked = task.completed;
+
+    const completionLabel = createElement(
+        'label',
+        'task-completion-label',
+        task.completed ? 'Выполнена' : 'Выполнить'
+    );
+
+    completionLabel.htmlFor = completionCheckbox.id;
+
+    // Если задача уже выполнена, применяем соответствующее оформление
+    if (task.completed) {
+        taskCard.classList.add('task-card--completed');
+    }
+
+    // Обработчик изменения состояния задачи
+    completionCheckbox.addEventListener('change', () => {
+        task.completed = completionCheckbox.checked;
+
+        taskCard.classList.toggle(
+            'task-card--completed',
+            task.completed
+        );
+
+        completionLabel.textContent = task.completed
+            ? 'Выполнена'
+            : 'Выполнить';
+    });
+
+    completionContainer.append(
+        completionCheckbox,
+        completionLabel
+    );
+
+    taskCard.append(taskContent, completionContainer);
 
     return taskCard;
 }
 
-
-// Отображение списка задач
-
+// Отрисовка списка задач
 function renderTasks() {
-
     taskList.replaceChildren();
-
 
     emptyState.hidden = tasks.length > 0;
 
-
     tasks.forEach(task => {
         const taskElement = createTaskElement(task);
-
         taskList.append(taskElement);
     });
 }
 
-
 // Добавление новой задачи
-
 function addTask(title, date) {
-
     const newTask = {
         id: Date.now(),
         title: title,
@@ -392,23 +290,16 @@ function addTask(title, date) {
         completed: false
     };
 
-
     tasks.push(newTask);
-
 
     renderTasks();
 }
 
-
 // Обработка отправки формы
-
 taskForm.addEventListener('submit', event => {
-
     event.preventDefault();
 
-
     const title = taskTitleInput.value.trim();
-
     const date = taskDateInput.value;
 
     if (!title) {
@@ -419,10 +310,7 @@ taskForm.addEventListener('submit', event => {
     addTask(title, date);
 
     taskForm.reset();
-
-
     taskTitleInput.focus();
 });
-
 
 renderTasks();
