@@ -200,6 +200,7 @@ function saveTasks() {
 
 // Массив задач загружается при запуске приложения
 const tasks = loadTasks();
+let draggedTaskId = null;
 
 // Форматирование даты
 function formatDate(dateString) {
@@ -305,9 +306,13 @@ function createEditForm(task) {
 
 
 // Создание карточки задачи
+// Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
     taskCard.dataset.taskId = task.id;
+
+    // Разрешаем перетаскивание только в обычном режиме отображения
+    taskCard.draggable = canReorderTasks();
 
     if (task.completed) {
         taskCard.classList.add('task-card--completed');
@@ -331,6 +336,7 @@ function createTaskElement(task) {
 
     const taskActions = createElement('div', 'task-card-actions');
 
+    // Чекбокс выполнения
     const completionContainer = createElement(
         'div',
         'task-completion'
@@ -365,6 +371,7 @@ function createTaskElement(task) {
         completionLabel
     );
 
+    // Кнопка редактирования
     const editButton = createElement(
         'button',
         'button task-edit-button',
@@ -381,6 +388,7 @@ function createTaskElement(task) {
         editForm.querySelector('input[type="text"]').focus();
     });
 
+    // Кнопка удаления
     const deleteButton = createElement(
         'button',
         'button task-delete-button',
@@ -400,6 +408,64 @@ function createTaskElement(task) {
     );
 
     taskCard.append(taskContent, taskActions);
+
+    taskCard.addEventListener('dragstart', event => {
+        if (!canReorderTasks()) {
+            event.preventDefault();
+            return;
+        }
+
+        draggedTaskId = String(task.id);
+
+        event.dataTransfer.setData(
+            'text/plain',
+            draggedTaskId
+        );
+
+        event.dataTransfer.effectAllowed = 'move';
+
+        taskCard.classList.add('task-card--dragging');
+    });
+
+    taskCard.addEventListener('dragover', event => {
+        if (draggedTaskId === null) {
+            return;
+        }
+
+        event.preventDefault();
+
+        event.dataTransfer.dropEffect = 'move';
+
+        taskCard.classList.add('task-card--drag-over');
+    });
+
+    taskCard.addEventListener('dragleave', event => {
+        if (!taskCard.contains(event.relatedTarget)) {
+            taskCard.classList.remove('task-card--drag-over');
+        }
+    });
+
+    taskCard.addEventListener('drop', event => {
+        event.preventDefault();
+
+        const draggedId = event.dataTransfer.getData('text/plain');
+
+        if (!draggedId || draggedId === String(task.id)) {
+            return;
+        }
+
+        const cardMiddle = taskCard.getBoundingClientRect().top +
+            taskCard.getBoundingClientRect().height / 2;
+
+        const insertAfter = event.clientY > cardMiddle;
+
+        moveTask(draggedId, task.id, insertAfter);
+    });
+
+    taskCard.addEventListener('dragend', () => {
+        draggedTaskId = null;
+        taskCard.classList.remove('task-card--dragging');
+    });
 
     return taskCard;
 }
@@ -486,6 +552,50 @@ function deleteTask(taskId) {
     tasks.splice(taskIndex, 1);
 
     saveTasks();
+    renderTasks();
+}
+
+// Проверка возможности изменения порядка задач
+function canReorderTasks() {
+    return (
+        searchInput.value.trim() === '' &&
+        filterSelect.value === 'all' &&
+        sortSelect.value === 'default'
+    );
+}
+
+// Изменение порядка задач
+function moveTask(draggedId, targetId, insertAfter) {
+    const draggedIndex = tasks.findIndex(
+        task => String(task.id) === draggedId
+    );
+
+    const targetIndex = tasks.findIndex(
+        task => String(task.id) === String(targetId)
+    );
+
+    if (
+        draggedIndex === -1 ||
+        targetIndex === -1 ||
+        draggedIndex === targetIndex
+    ) {
+        return;
+    }
+
+    const [draggedTask] = tasks.splice(draggedIndex, 1);
+
+    const newTargetIndex = tasks.findIndex(
+        task => String(task.id) === String(targetId)
+    );
+
+    const insertIndex = insertAfter
+        ? newTargetIndex + 1
+        : newTargetIndex;
+
+    tasks.splice(insertIndex, 0, draggedTask);
+
+    draggedTaskId = null;
+
     renderTasks();
 }
 

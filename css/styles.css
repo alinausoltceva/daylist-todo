@@ -560,7 +560,7 @@ a:focus-visible {
 @media (max-width: 480px) {
     .task-card-actions {
         width: 100%;
-        justify-content: space-between;
+        justify-content: space-between
     }
 
     .task-edit-form {
@@ -589,3 +589,19 @@ a:focus-visible {
     .task-delete-button:hover {
         background-color: #f2dddd;
     }
+
+/* Перетаскивание задач */
+
+.task-card[draggable="true"] {
+    cursor: grab;
+}
+
+.task-card--dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.task-card--drag-over {
+    outline: 2px dashed var(--color-primary);
+    outline-offset: 3px;
+}
