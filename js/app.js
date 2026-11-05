@@ -180,16 +180,32 @@ const STORAGE_KEY = 'daylist-tasks';
 
 // Загрузка задач из localStorage
 function loadTasks() {
-    const savedTasks = localStorage.getItem(STORAGE_KEY);
-
-    if (!savedTasks) {
-        return [];
-    }
-
     try {
+        const savedTasks = localStorage.getItem(STORAGE_KEY);
+
+        if (!savedTasks) {
+            return [];
+        }
+
         const parsedTasks = JSON.parse(savedTasks);
 
-        return Array.isArray(parsedTasks) ? parsedTasks : [];
+        if (!Array.isArray(parsedTasks)) {
+            return [];
+        }
+
+        return parsedTasks.filter(task => {
+            return (
+                task !== null &&
+                typeof task === 'object' &&
+                Number.isFinite(task.id) &&
+                typeof task.title === 'string' &&
+                task.title.trim() !== '' &&
+                typeof task.date === 'string' &&
+                (task.date === '' || /^\d{4}-\d{2}-\d{2}$/.test(task.date)) &&
+                typeof task.completed === 'boolean'
+            );
+        });
+
     } catch (error) {
         console.error('Не удалось загрузить задачи:', error);
         return [];
@@ -547,13 +563,23 @@ function renderTasks() {
 
     if (selectedSort === 'date-asc') {
         sortedTasks.sort((a, b) => {
-            return new Date(a.date) - new Date(b.date);
+            if (!a.date && !b.date) return 0;
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+
+            return a.date.localeCompare(b.date);
         });
+
     } else if (selectedSort === 'date-desc') {
         sortedTasks.sort((a, b) => {
-            return new Date(b.date) - new Date(a.date);
+            if (!a.date && !b.date) return 0;
+            if (!a.date) return 1;
+            if (!b.date) return -1;
+
+            return b.date.localeCompare(a.date);
         });
     }
+
 
     emptyState.hidden = true;
 
