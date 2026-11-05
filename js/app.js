@@ -142,6 +142,7 @@ const sectionTitle = createElement(
     'Мои задачи'
 );
 
+const taskStats = createElement('p', 'task-stats');
 const taskList = createElement('div', 'task-list');
 taskList.setAttribute('aria-live', 'polite');
 
@@ -157,7 +158,13 @@ notificationArea.setAttribute('role', 'status');
 notificationArea.setAttribute('aria-live', 'polite');
 
 // Собираем интерфейс
-tasksSection.append(sectionTitle, taskList, emptyState);
+tasksSection.append(
+    sectionTitle,
+    taskStats,
+    taskList,
+    emptyState
+);
+
 main.append(taskForm, controls, tasksSection);
 
 document.body.append(
@@ -215,6 +222,23 @@ function formatDate(dateString) {
         month: 'long',
         year: 'numeric'
     });
+}
+
+// Проверка, является ли задача просроченной
+function isTaskOverdue(task) {
+    if (!task.date || task.completed) {
+        return false;
+    }
+
+    const today = new Date();
+
+    const todayString = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, '0'),
+        String(today.getDate()).padStart(2, '0')
+    ].join('-');
+
+    return task.date < todayString;
 }
 
 // Создание формы редактирования задачи
@@ -306,16 +330,18 @@ function createEditForm(task) {
 
 
 // Создание карточки задачи
-// Создание карточки задачи
 function createTaskElement(task) {
     const taskCard = createElement('article', 'task-card');
     taskCard.dataset.taskId = task.id;
 
-    // Разрешаем перетаскивание только в обычном режиме отображения
     taskCard.draggable = canReorderTasks();
 
     if (task.completed) {
         taskCard.classList.add('task-card--completed');
+    }
+
+    if (isTaskOverdue(task)) {
+        taskCard.classList.add('task-card--overdue');
     }
 
     const taskContent = createElement('div', 'task-card-content');
@@ -326,10 +352,14 @@ function createTaskElement(task) {
         task.title
     );
 
+    const taskDateText = isTaskOverdue(task)
+        ? `Просрочено · ${formatDate(task.date)}`
+        : formatDate(task.date);
+
     const taskDate = createElement(
         'p',
         'task-card-date',
-        formatDate(task.date)
+        taskDateText
     );
 
     taskContent.append(taskTitle, taskDate);
@@ -474,6 +504,13 @@ function createTaskElement(task) {
 // Отрисовка списка задач
 function renderTasks() {
     taskList.replaceChildren();
+
+    const completedCount = tasks.filter(
+        task => task.completed
+    ).length;
+
+    taskStats.textContent =
+        `Всего задач: ${tasks.length} · Выполнено: ${completedCount}`;
 
     const searchQuery = searchInput.value.trim().toLowerCase();
 

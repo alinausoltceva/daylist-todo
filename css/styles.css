@@ -605,3 +605,22 @@ a:focus-visible {
     outline: 2px dashed var(--color-primary);
     outline-offset: 3px;
 }
+
+/* Статистика задач */
+
+.task-stats {
+    margin: 8px 0 20px;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+}
+
+/* Просроченные задачи */
+
+.task-card--overdue {
+    border-color: #e7c4c4;
+}
+
+    .task-card--overdue .task-card-date {
+        color: #b45d5d;
+        font-weight: 600;
+    }
