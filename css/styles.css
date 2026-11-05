@@ -624,3 +624,70 @@ a:focus-visible {
         color: #b45d5d;
         font-weight: 600;
     }
+
+/* Плавные изменения состояния карточек */
+.task-card {
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* Карточка при наведении */
+.task-card:hover {
+    border-color: var(--color-border-focus);
+    box-shadow: var(--shadow-card);
+}
+
+/* Длинные названия задач */
+.task-card-title {
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.task-card-date {
+    flex-shrink: 0;
+}
+
+/* Расположение содержимого карточки */
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.task-card-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.task-card-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+
+@media (max-width: 480px) {
+    .task-card {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .task-card-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .task-card-content {
+        width: 100%;
+    }
+
+    .task-card-title {
+        font-size: 15px;
+    }
+}
