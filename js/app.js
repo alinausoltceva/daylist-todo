@@ -594,8 +594,9 @@ function moveTask(draggedId, targetId, insertAfter) {
 
     tasks.splice(insertIndex, 0, draggedTask);
 
-    draggedTaskId = null;
+    saveTasks();
 
+    draggedTaskId = null;
     renderTasks();
 }
 
